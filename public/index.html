@@ -1,0 +1,779 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>管家婆</title>
+        <link rel="stylesheet" type="text/css" href="default_full.css">
+        <link rel="stylesheet" type="text/css" href="header_black.css">
+        <link rel="stylesheet" type="text/css" href="lightform.css">
+        <link rel="stylesheet" type="text/css" href="sidebar.css">
+        <link rel="stylesheet" type="text/css" href="snackbar.css">
+        <link rel="stylesheet" type="text/css" href="float_button.css">
+    </head>
+    <style type="text/css">
+        article img {
+            border-radius: 10px;
+            float: left;
+            width: 100px;
+            height: 100px;
+
+        }
+        article li div {
+            padding: 10px;
+            margin: 0 auto;
+
+        }
+        article li p {
+            margin: 0 auto;
+            padding: 5px;
+        }
+
+        article ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        article li {
+            padding: 5px;
+            height: 100px;
+            border-bottom: 1px lightgray solid;
+        }
+        article li:hover {
+            background: #eee;
+            cursor: pointer;
+        }
+
+        h4 {
+            display: inline-block;
+            font-size:25px;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        fieldset {
+            margin-top: 30px;
+            margin-left: 15px;
+        }
+
+        h5 {
+        	font-size:19px;
+
+        }
+
+        input[type="search"] {
+            position: relative;
+            top: -45px;
+            left: -100px;
+            width: 150px;
+        }
+
+
+    </style>
+    <body>
+        <header>
+        	<h3>
+        		<span onclick="document.getElementById('sidebar_left').style.width='360px'" >&#9776;&nbsp;</span>
+        		<span onclick="updatedata()"><script type="text/javascript">document.write(document.title)</script></span>
+
+                <!--<span onclick="document.getElementById('product').style.width='360px'" style="float: right;">&#8285;</span>-->
+
+        	</h3>
+
+
+            <!--<input type="search" name="search" style="float: right;" placeholder ="查询..." onkeyup="updatedata('key='+this.value)">-->
+
+        </header>
+
+
+
+        <main>
+
+
+        	<article>
+                <ul id="salelist">
+<!--
+                        <li>
+                            <img alt="<?= $row['name'] ?>" src="data:image/jpeg;base64,<?= base64_encode($row['img']) ?>" >
+                            <div>
+                            <p><?=$row['date']?><a href="#" onclick="show_msg('第<?=$row['id']?>号记录已经被删除！')" style="float: right;">删除</a></p>
+
+                            <h3><?=$row['name']?></h3>
+                            <p style="text-align: right;">
+                            <span><?=$row['number']?>X</span>
+                            <span><?=$row['price']?>=</span>
+                            <span><?=$row['amount']?></span>
+                            </p>
+                            </div>
+                        </li>
+  -->
+                </ul>
+            </article>
+
+        <div id="sidebar_left" class="sidebar_left">
+            <span class="close" onclick="this.parentElement.style.width = '0';">&times;</span>
+            <!-- <h4>查询</h4> -->
+            <form id="find">
+                    <fieldset>
+                        <legend>统计设置</legend>
+                        <input type="date" id="start_date" name="start_date">
+                        <input type="date" id="end_date" name="end_date">
+
+
+<!--
+
+                        <div>
+                          <input type="radio" id="find_id" name="find_id" value="0">
+                          <label for="dewey">日汇总表</label>
+                        </div>
+
+                        <div>
+                          <input type="radio" id="find_id" name="find_id" value="1" checked>
+                          <label for="huey">月汇总表</label>
+                        </div>
+
+                        <div>
+                          <input type="radio" id="find_id" name="find_id" value="2">
+                          <label for="louie">分类汇总表</label>
+                        </div>
+
+                        <div>
+                          <input type="radio" id="find_id" name="find_id" value="3">
+                          <label for="louie">商品汇总表</label>
+                        </div>
+
+
+                        <div>
+                          <input type="radio" id="find_id" name="find_id" value="4">
+                          <label for="louie">明细表</label>
+                        </div>
+
+-->
+                        <select id="find_style">
+                            <option value="monthly">月汇总表</option>
+                            <option value="daily">日汇总表</option>
+                            <option value="product">商品汇总表</option>
+                            <option value="list">明细表</option>
+                        </select>
+
+                        <input type="button" value="开始" onclick="sum()">
+                        <input type="button" value="关闭" onclick="document.getElementById('sidebar_left').style.width = '0';">
+
+                    </fieldset>
+                    <!-- <a href="#" onclick="exec_sql()" style="margin-right:10px;float: right;">更多查询</a> -->
+
+
+                    <!-- <textarea id="sql" rows=4 value="">update sale set...</textarea> -->
+
+            </form>
+
+        </div>
+        </main>
+
+        <div id="sidebar_right" class="sidebar_right">
+
+            <span class="close" onclick="this.parentElement.style.width = '0';">&times;</span>
+            <!-- <h4>新销售单</h4> -->
+                    <fieldset>
+                    <legend>新销售单</legend>
+                    <form id="form" onsubmit="submitSale(event)">
+
+                    <input type="date" id="sdate" name="date">
+                    <input type="number" id="pid" name="pid" value="0" readonly >
+                    <select id="pdname" onchange="getpd()" ></select>
+
+                    <input type="number" id="pdnum" name="number" placeholder=销售数量 onFocus="this.select()" onkeyup="upamount()">
+                    <input type="number" id="pdprice" name="price" placeholder=销售单价 onFocus="this.select()" onkeyup="upamount()">
+                    <input type="number" id="pdamount" name="amount" placeholder=销售金额 onFocus="this.select()">
+                    <input type="number" id="pdcost" name="cost" placeholder=销售成本 onFocus="this.select()">
+                    <input type="text" id="remark" name="remark" placeholder=备注 onFocus="this.select()">
+                    <input type="submit" value="提交">
+                    <input type="button" value="关闭" onclick="document.getElementById('sidebar_right').style.width = '0';">
+                    </form>
+                    </fieldset>
+        </div>
+
+
+<!-- --
+        <div id="product" class="sidebar_right">
+
+            <span class="close" onclick="this.parentElement.style.width = '0';">&times;</span>
+
+                    <fieldset>
+                    <legend>商品管理</legend>
+                    <output id="result" ></output>
+                    <form id="prod">
+
+
+                    <select id="prod_sel" onchange="getprod()" ></select>
+                    <input type="number" id="prod_id" name="prod_id" readonly value="0">
+                    <input type="text" id="prod_name" name="prod_name" placeholder=商品名称 onFocus="this.select()">
+                    <input id="image" name="image" type="file" accept="image/*" />
+                    <input type="number" id="prod_price" name="prod_price" placeholder=参考单价 onFocus="this.select()">
+                    <input type="number" id="prod_cost" name="prod_cost" placeholder=销售成本 onFocus="this.select()">
+                    <input type="submit" value="提交">
+                    <input type="button" value="关闭" onclick="document.getElementById('product').style.width = '0';">
+                    </form>
+                    </fieldset>
+
+
+
+
+        </div>
+-->
+        <div id="dialog" class="dialog">
+            <span class="close" onclick="this.parentElement.style.display = 'none';">&times;</span>
+        </div>
+
+        <button onclick="document.getElementById('sidebar_right').style.width='360px'" class="float_button" id="add" title="add">&#43;</button>
+        <!--
+        <footer>
+            <a href="mailto:jdzcn@qq.com" >联系我们</a>
+        </footer>
+		-->
+        <div id="snackbar"></div>
+
+        <script type="text/javascript">
+
+            window.onload=function() {updatedata();uppd();}
+
+            // API 基础路径: 本地调试 http://localhost:8787, 部署后走同域 /api/*
+
+            var prod,prodnum;
+
+            var td=new Date().toISOString().substring(0, 10);
+            var sd=new Date().toISOString().substring(0, 8)+"01";
+            document.getElementById('sdate').value = td;
+
+            document.getElementById('start_date').value = sd;
+            document.getElementById('end_date').value = td;
+
+            // document.getElementById('sdate').value = moment().format('YYYY-MM-DD');
+
+            function uppd()
+            {
+
+            fetch("/api/products").then(function(response) {
+              return response.json();
+            }).then(function(data) {
+
+                    prod=data;
+                    prodnum=prod.length;
+                    var sel = document.getElementById("pdname");
+                    //var psel = document.getElementById("prod_sel");
+
+                    // document.getElementById("pid").value=0;
+                    sel.innerHTML="";
+                    //psel.innerHTML="";
+
+                    let option=document.createElement('option');
+                    option.text="选取商品";
+                    option.value=0;
+                    sel.appendChild(option);
+
+                    let addopt=document.createElement('option');
+                    addopt.text="新建商品";
+                    addopt.value=0;
+                    //psel.appendChild(addopt);
+
+
+                        for(var i = 0;i<prodnum;i++){
+
+                           let option = document.createElement('option');
+                           let prodopt= document.createElement('option');
+
+                           option.text=prod[i].name;
+                           prodopt.text=prod[i].name;
+                           // if(i==0) option.selected=true;
+                          option.value =prod[i].pid;
+                          prodopt.value =prod[i].pid;
+
+                          sel.appendChild(option);
+                          //psel.appendChild(prodopt);
+
+                        }
+              });
+
+            }
+
+            function getpd() {
+                let pid=document.getElementById("pdname").value;
+                if(pid==0) {
+                    document.getElementById("pid").value="0";
+                    return;
+                }
+
+                for(var i=0;i<prodnum;i++) {
+                    if(prod[i].pid==pid) {
+                        document.getElementById("pid").value=prod[i].pid;
+                        document.getElementById("pdnum").value=1;
+                        document.getElementById("pdprice").value=prod[i].price;
+                        document.getElementById("pdamount").value=prod[i].price;
+
+                        document.getElementById("pdcost").value=prod[i].cost;
+                    }
+                }
+            }
+
+            function getprod() {
+                let pid=document.getElementById("prod_sel").value;
+                var output = document.getElementById("result");
+                output.innerHTML="";
+                if(pid==0) {
+                    document.getElementById("prod_id").value="0";
+
+                    return;
+                }
+
+
+                for(var i=0;i<prodnum;i++) {
+                    if(prod[i].pid==pid) {
+                        document.getElementById("prod_id").value=prod[i].pid;
+                        document.getElementById("prod_name").value=prod[i].name;
+                        document.getElementById("prod_price").value=prod[i].price;
+                        document.getElementById("prod_cost").value=prod[i].cost;
+
+                        //var div = document.createElement("div");
+                        // div.style="display:inline";
+                        //div.innerHTML = "<img style='width:100px;height:100px;' src='data:image/jpeg;base64,"+hexToBase64(prod[i].img) + "'" + " title='" + prod[i].name + "'/>";
+                        //output.insertBefore(div, null);
+
+                    }
+                }
+            }
+
+            function sum()
+{
+    var start_date = document.getElementById('start_date').value;
+    var end_date = document.getElementById('end_date').value;
+    var type = document.getElementById('find_style').value;
+
+    if (!start_date || !end_date) {
+        alert('请选择统计起止日期');
+        return;
+    }
+
+    document.getElementById('sidebar_left').style.width = '0';
+
+    fetch("/api/summary?type=" + type + "&start_date=" + start_date + "&end_date=" + end_date)
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        var myul = document.getElementById("salelist");
+        myul.innerHTML = "";
+
+        var headerLi = document.createElement("li");
+        headerLi.setAttribute('style', "height:30px;background:#f0f0f0;font-weight:bold;");
+        var headerText = document.createElement("span");
+        headerText.innerHTML = "统计区间：" + start_date + " 至 " + end_date + "  |  " + getTypeName(type);
+        headerLi.appendChild(headerText);
+        myul.appendChild(headerLi);
+
+        if (type === 'monthly') {
+            renderMonthlySummary(myul, data);
+        } else if (type === 'daily') {
+            renderDailySummary(myul, data);
+        } else if (type === 'product') {
+            renderProductSummary(myul, data);
+        } else {
+            renderList(myul, data);
+        }
+
+        var backLi = document.createElement("li");
+        backLi.setAttribute('style', "height:30px;border-top:2px solid #ddd;margin-top:10px;");
+        var backA = document.createElement("a");
+        backA.href = "#";
+        backA.setAttribute("onclick", "updatedata()");
+        backA.setAttribute("style", "float:right;color:#007aff;text-decoration:underline;");
+        backA.innerHTML = "返回日常明细";
+        backLi.appendChild(backA);
+        myul.appendChild(backLi);
+    })
+    .catch(function(err) {
+        alert('统计查询失败: ' + err.message);
+        console.error(err);
+    });
+}
+
+function getTypeName(type) {
+    var names = {'monthly':'月汇总表','daily':'日汇总表','product':'商品汇总表','list':'明细表'};
+    return names[type] || type;
+}
+
+function renderMonthlySummary(container, data) {
+    var totalAmount = 0, totalProfit = 0;
+    for (var i = 0; i < data.length; i++) {
+        var row = data[i], li = document.createElement("li");
+        li.setAttribute('style', "height:28px;line-height:28px;border-bottom:1px solid #eee;");
+        var p = document.createElement("span"); p.innerHTML = row.month; li.appendChild(p);
+        var m = document.createElement("span"); m.setAttribute('style','margin-left:30px;'); m.innerHTML = "销售金额:" + formatNum(row.total_amount); li.appendChild(m);
+        var t = document.createElement("span"); t.setAttribute('style','float:right;'); t.innerHTML = "毛利:" + formatNum(row.total_profit); li.appendChild(t);
+        container.appendChild(li);
+        totalAmount += parseFloat(row.total_amount || 0);
+        totalProfit += parseFloat(row.total_profit || 0);
+    }
+    addTotalRow(container, totalAmount, totalProfit);
+}
+
+function renderDailySummary(container, data) {
+    var totalAmount = 0, totalProfit = 0;
+    for (var i = 0; i < data.length; i++) {
+        var row = data[i], li = document.createElement("li");
+        li.setAttribute('style', "height:28px;line-height:28px;border-bottom:1px solid #eee;");
+        var p = document.createElement("span"); p.innerHTML = row.date; li.appendChild(p);
+        var m = document.createElement("span"); m.setAttribute('style','margin-left:30px;color:#888;'); m.innerHTML = "(" + row.count + "笔)"; li.appendChild(m);
+        var amt = document.createElement("span"); amt.setAttribute('style','margin-left:10px;'); amt.innerHTML = "销售金额:" + formatNum(row.total_amount); li.appendChild(amt);
+        var t = document.createElement("span"); t.setAttribute('style','float:right;'); t.innerHTML = "毛利:" + formatNum(row.total_profit); li.appendChild(t);
+        container.appendChild(li);
+        totalAmount += parseFloat(row.total_amount || 0);
+        totalProfit += parseFloat(row.total_profit || 0);
+    }
+    addTotalRow(container, totalAmount, totalProfit);
+}
+
+function renderProductSummary(container, data) {
+    var totalAmount = 0, totalProfit = 0;
+    for (var i = 0; i < data.length; i++) {
+        var row = data[i], li = document.createElement("li");
+        li.setAttribute('style', "height:28px;line-height:28px;border-bottom:1px solid #eee;");
+        var p = document.createElement("span"); p.innerHTML = row.productName || '未分类'; li.appendChild(p);
+        var m = document.createElement("span"); m.setAttribute('style','margin-left:30px;'); m.innerHTML = row.total_number + "件"; li.appendChild(m);
+        var amt = document.createElement("span"); amt.setAttribute('style','margin-left:10px;'); amt.innerHTML = formatNum(row.total_amount); li.appendChild(amt);
+        var t = document.createElement("span"); t.setAttribute('style','float:right;'); t.innerHTML = "毛利:" + formatNum(row.total_profit); li.appendChild(t);
+        container.appendChild(li);
+        totalAmount += parseFloat(row.total_amount || 0);
+        totalProfit += parseFloat(row.total_profit || 0);
+    }
+    addTotalRow(container, totalAmount, totalProfit);
+}
+
+function renderList(container, data) {
+    for (var i = 0; i < data.length; i++) {
+        var row = data[i], li = document.createElement("li");
+        var div = document.createElement("div");
+        var d = document.createElement("p"); d.innerHTML = row.date;
+        var a = document.createElement("a"); a.href = "#"; a.setAttribute("onclick","delrec(" + row.id + ")"); a.setAttribute("style","float:right;"); a.innerHTML = "删除"; d.appendChild(a);
+        var h = document.createElement("h4"); h.innerHTML = row.productName || '未分类';
+        var p = document.createElement("h5"); p.setAttribute('style',"float:right;");
+        p.innerHTML = row.number + "X" + row.price + "=" + row.amount + "-" + row.cost + "=<span style='color:red'>" + (parseFloat(row.amount) - parseFloat(row.cost)).toFixed(2) + "</span>";
+        var m = document.createElement("p"); m.setAttribute('style',"text-align:right;"); m.innerHTML = row.remark || '';
+        div.appendChild(d); div.appendChild(h); div.appendChild(p); div.appendChild(m);
+        li.appendChild(div); container.appendChild(li);
+    }
+    if (data.length === 0) {
+        var emptyLi = document.createElement("li");
+        emptyLi.innerHTML = "<span style='color:#999;padding:20px;text-align:center;display:block;'>该时间段无销售记录</span>";
+        container.appendChild(emptyLi);
+    }
+}
+
+function addTotalRow(container, totalAmount, totalProfit) {
+    var totalLi = document.createElement("li");
+    totalLi.setAttribute('style', "height:32px;line-height:32px;background:#fff8e1;font-weight:bold;border-top:2px solid #ffc107;");
+    var label = document.createElement("span"); label.innerHTML = "合  计"; totalLi.appendChild(label);
+    var amt = document.createElement("span"); amt.setAttribute('style','margin-left:30px;color:#d32f2f;'); amt.innerHTML = "销售总金额:" + formatNum(totalAmount); totalLi.appendChild(amt);
+    var profit = document.createElement("span"); profit.setAttribute('style','float:right;color:#2e7d32;'); profit.innerHTML = "总毛利:" + formatNum(totalProfit); totalLi.appendChild(profit);
+    container.appendChild(totalLi);
+}
+
+function formatNum(val) {
+    var num = parseFloat(val);
+    if (isNaN(num)) return "0.00";
+    return num.toFixed(2);
+}
+
+function updatedata()
+            {
+
+                    let str = "";
+                    for (let i in arguments) {
+                        str += arguments[i].toString()+"&";
+                    }
+                    console.log(str);
+
+            fetch("/api/sales?"+str).then(function(response) {
+              return response.json();
+            }).then(function(jsonstr) {
+                    // console.log(jsonstr);
+                    var myul = document.getElementById("salelist");
+                    myul.innerHTML="";
+                        for(var i = 0;i<jsonstr.length;i++){
+
+                            let li=document.createElement("li");
+				/*
+                            let img = document.createElement("img");
+                            img.src="data:image/jpeg;base64,"+hexToBase64(jsonstr[i].img);
+                            img.alt=jsonstr[i].name;
+
+                            li.appendChild(img);
+				*/
+                            let div = document.createElement("div");
+                            let d = document.createElement("p");
+
+                            d.innerHTML=jsonstr[i].date;
+
+                            let a = document.createElement("a");
+                            a.href="#";
+                            a.setAttribute("onclick","delrec("+jsonstr[i].id+")");
+                            a.setAttribute("style","float:right");
+                            a.innerHTML="删除";
+                            d.appendChild(a);
+
+                            let h = document.createElement("h4");
+                            h.innerHTML=jsonstr[i].productName;
+
+                            let p = document.createElement("h5");
+                            p.setAttribute('style', "float:right");
+                            p.innerHTML=jsonstr[i].number+"X"+jsonstr[i].price+"="+jsonstr[i].amount+"-"+jsonstr[i].cost+"=<span style='color:red'>"+(jsonstr[i].amount-jsonstr[i].cost)+"</span>";
+
+                            let m = document.createElement("p");
+                            m.setAttribute('style', "text-align:right");
+                            m.innerHTML=jsonstr[i].remark;
+
+                            div.appendChild(d);
+                            div.appendChild(h);
+                            div.appendChild(p);
+                            div.appendChild(m);
+
+                            li.appendChild(div);
+                            myul.appendChild(li);
+
+                        }
+              });
+
+            }
+
+
+/*
+            function hexToBase64(str) {
+                var bString = "";
+                for( var i = 0; i < str.length; i +=2) {
+                     bString += String.fromCharCode( parseInt( str.substr( i, 2), 16));
+                }
+                return btoa(bString);
+            }
+
+            function exec_sql() {
+                let sql = prompt("Please enter your sql", "update sale set ...");
+
+                if (person != null) {
+
+                }
+            }
+*/
+
+            function show_msg(msg) {
+              var x = document.getElementById("snackbar");
+
+              // Add the "show" class to DIV
+              x.className = "show";
+              x.innerHTML=msg;
+              // After 3 seconds, remove the show class from DIV
+              setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+            }
+
+function delrec(pid) {
+  if(confirm('确定要删除这件商品(id:'+pid+')吗？')) {
+    fetch('/api/sales/'+pid, { method: 'DELETE' })
+    .then(response => response.json())
+.then(result => {
+  console.log("delete successfully.",result);
+  updatedata();
+  show_msg("更新成功！");
+})
+.catch(error => {
+  console.log('Error:', error);
+  // show_msg("Update error.");
+});
+  }
+
+
+}
+
+function upamount() {
+    document.getElementById("pdamount").value=document.getElementById("pdnum").value*document.getElementById("pdprice").value;
+    // document.getElementById("pdcost").value=document.getElementById("pdnum").value*document.getElementById("pdcost").value;
+
+}
+
+async function submitSale(e) {
+  e.preventDefault();
+
+  const body = {
+    date: document.getElementById('sdate').value,
+    pid: Number(document.getElementById('pid').value),
+    number: Number(document.getElementById('pdnum').value),
+    price: Number(document.getElementById('pdprice').value),
+    amount: Number(document.getElementById('pdamount').value),
+    cost: Number(document.getElementById('pdcost').value),
+    remark: document.getElementById('remark').value,
+  };
+
+  if (!body.date || !body.pid || !body.number) {
+    alert('日期、商品、数量不能为空');
+    return;
+  }
+
+  const res = await fetch('/api/sales', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    //alert('提交成功');
+    document.getElementById('sidebar_right').style.width = '0';
+    // 刷新销售列表
+    updatedata();
+    show_msg("更新成功！");
+  } else {
+    alert(data.error || '提交失败');
+  }
+}
+/*
+const form = document.getElementById("form");
+
+form.addEventListener('submit', function(e) {
+    let v=document.getElementById("pid").value;
+    //console.log(v);
+    if(v!="0") {
+    // Prevent default behavior:
+    e.preventDefault();
+    // Create payload as new FormData object:
+    const payload = new FormData(form);
+    //console.log(payload);
+    // Post the payload using Fetch:
+    fetch('/api/sales', {
+    method: 'POST',
+    body: payload,
+    })
+.then(response => response.json())
+.then(result => {
+  console.log('Success:', result);
+  updatedata();
+  show_msg("更新成功！");
+})
+.catch(error => {
+  console.error('Error:', error);
+  // show_msg("Update error.");
+});
+document.getElementById("sidebar_right").style.width = "0";
+    }
+    else
+        show_msg("未选择商品!");
+  });
+
+
+
+const f = document.getElementById("prod");
+
+f.addEventListener('submit', function(e) {
+    // Prevent default behavior:
+    e.preventDefault();
+    // Create payload as new FormData object:
+    const payload = new FormData(f);
+    // Post the payload using Fetch:
+    fetch('/api/products', {
+    method: 'POST',
+    body: payload,
+    })
+.then(response => response.json())
+.then(result => {
+  console.log('Success:', result);
+  uppd();
+  show_msg("更新成功！");
+})
+.catch(error => {
+  console.error('Error:', error);
+  // show_msg("Update error.");
+});
+document.getElementById("product").style.width = "0";
+
+  });
+
+
+function find() {
+    // alert(document.getElementById('start_date').value);
+    // alert(document.getElementById('end_date').value);
+            let ele = document.getElementsByName('find_id');
+            let start_date=document.getElementById('start_date').value  ;
+            let end_date=document.getElementById('end_date').value  ;
+            let fs;
+            start_date=start_date.replace("/","-");
+            end_date=end_date.replace("/","-");
+            for(i = 0; i < ele.length; i++) {
+                if(ele[i].checked)
+                fs=ele[i].value;
+            }
+
+            document.getElementById("sidebar_left").style.width="0px";
+            topFunction();
+
+            if(fs=="4")
+            updatedata("start_date="+start_date,"end_date="+end_date,"fs="+fs);
+            else
+            sum("start_date="+start_date,"end_date="+end_date,"fs="+fs);
+
+
+
+}
+
+function topFunction() {
+  document.body.scrollTop = 0; // For Safari
+  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
+
+    function handleFileSelect() {
+    //Check File API support
+    if (window.File && window.FileList && window.FileReader) {
+
+        var files = event.target.files; //FileList object
+        var output = document.getElementById("result");
+        // var img=document.getElementById("image");
+        // img.value="";
+        output.innerHTML="";
+        var len=files.length;
+        for (var i = 0; i < len; i++) {
+            var file = files[i];
+            //Only pics
+            // if (!file.type.match('image')) continue;
+
+            const maxAllowedSize = 2 * 1024 * 1024;
+              if (file.size > maxAllowedSize) {
+                alert('文件大小超出限制！');
+                event.target.value ='';
+                break;
+                // Here you can ask your users to load correct file
+                // alert("文件大小超出限制！")；
+                // exit(0);
+              }
+            var picReader = new FileReader();
+            picReader.addEventListener("load", function (event) {
+                var picFile = event.target;
+                var div = document.createElement("div");
+                // div.style="display:inline";
+                div.innerHTML = "<img style='width:100px;height:100px;' src='" + picFile.result + "'" + "title='" + picFile.name + "'/>";
+                output.insertBefore(div, null);
+            });
+            //Read the image
+            picReader.readAsDataURL(file);
+            // img.value+=file.name+(i==(len-1)?"":"|");
+        }
+        // imgs.value=imgs.value.substr(0,(len-1));
+
+    } else {
+        console.log("Your browser does not support File API");
+    }
+}
+
+document.getElementById('image').addEventListener('change', handleFileSelect, false);
+*/
+document.getElementById('sdate').valueAsDate = new Date();
+    </script>
+
+    </body>
+</html>

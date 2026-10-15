@@ -1,0 +1,37 @@
+      html {
+        font-family: sans-serif;
+        background: white;
+      }
+
+      body {
+        margin: 0;
+        background-color: white;
+        min-height:980px;
+		    min-width: 200px;
+      }
+      main {
+      	display:flex;
+        flex-wrap:wrap;
+        margin-top:80px;
+        width: 100%;
+      }
+      aside {
+      	flex: 1;
+        border-right: 1px gray solid;
+        padding: 10px;
+      }
+      article{
+      	flex: 5;
+        padding: 10px;
+      }
+
+      @media (max-width: 768px) {
+        main {
+          flex-direction: column;
+        }
+        aside {
+          /*width: 100%;*/
+          border: 1px solid gray;
+          display: none;
+        }
+      }

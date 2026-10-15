@@ -1,0 +1,56 @@
+        .sidebar_left,.sidebar_right,.sidebar_bottom,.dialog {
+          position: fixed;
+          z-index: 2;
+          background: white;
+          overflow-x: hidden;
+          transition: 0.5s;
+          -webkit-box-shadow:#666 0px 0px 10px;
+          -moz-box-shadow:#666 0px 0px 10px;
+          box-shadow:#666 0px 0px 10px;
+          background: white;
+        }
+
+        .sidebar_left,.sidebar_right {
+          height: 100%;
+          width: 0px;
+          top: 0;
+        }
+        .sidebar_left {
+          left: 0;
+        }
+
+        .sidebar_right {
+          right: 0;
+        }
+
+        .sidebar_bottom {
+          height: 0px;
+          width: 100%;
+          left: 0;
+          bottom: 0;
+        }
+
+        .dialog {
+          display: none;
+          width: 50%;
+          height: 50%;
+          margin: 0 auto;
+          left:  25%;
+          border: 1px solid #888;
+          border-radius: 10px;
+
+        }
+
+        .close {
+          color: #aaaaaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+          color: #000;
+          text-decoration: none;
+          cursor: pointer;
+        }

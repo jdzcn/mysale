@@ -1,0 +1,26 @@
+.float_button {
+  /*display: none; */
+  width: 60px;
+  height: 60px;
+
+  position: fixed; /* Fixed/sticky position */
+  bottom: 50px; /* Place the button at the bottom of the page */
+  right: 20px; /* Place the button 30px from the right */
+  z-index: 1; /* Make sure it does not overlap */
+  border: none; /* Remove borders */
+  outline: none; /* Remove outline */
+  background-color: green; /* Set a background color */
+  color: white; /* Text color */
+  cursor: pointer; /* Add a mouse pointer on hover */
+  padding: 15px; /* Some padding */
+  border-radius: 50%; /* Rounded corners */
+  font-size: 28px; /* Increase font size */
+
+  -webkit-box-shadow:#666 0px 0px 10px;
+  -moz-box-shadow:#666 0px 0px 10px;
+  box-shadow:#666 0px 0px 10px;
+}
+
+.float_button:hover {
+  background-color: #555; /* Add a dark-grey background on hover */
+}
